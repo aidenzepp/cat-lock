@@ -3,13 +3,16 @@ import ApplicationServices
 import Carbon
 import CoreGraphics
 
-/// Tracks the physical Escape state and modifier state using a monotonic clock.
+/// Tracks the physical unlock-key state and modifier state using a monotonic clock.
 struct UnlockGesture {
+    /// Physical ANSI U key shared by event matching and hardware polling.
+    static let keyCode = CGKeyCode(kVK_ANSI_U)
+
     /// Required uninterrupted hold duration in nanoseconds.
     static let duration: UInt64 = 2_000_000_000
 
-    /// Whether Escape is currently held according to the latest event or hardware sample.
-    private(set) var escapeDown = false
+    /// Whether the unlock key is currently held according to the latest event or hardware sample.
+    private(set) var keyDown = false
 
     /// Whether all three required modifiers are held in the latest sample.
     private var modifiersDown = false
@@ -18,21 +21,33 @@ struct UnlockGesture {
 
     /// Updates physical state without restarting an existing uninterrupted hold.
     /// - Parameters:
-    ///   - escape: The latest Escape state, or nil to preserve the previous state.
+    ///   - keyPressed: The latest unlock-key state, or nil to preserve the previous state.
     ///   - modifiers: Whether Control, Option and Command are all down.
     ///   - now: Current monotonic uptime in nanoseconds.
-    mutating func update(escape: Bool? = nil, modifiers: Bool, now: UInt64) {
-        if let escape {
-            escapeDown = escape
+    mutating func update(keyPressed: Bool? = nil, modifiers: Bool, now: UInt64) {
+        if let keyPressed {
+            keyDown = keyPressed
         }
         modifiersDown = modifiers
-        if escapeDown, modifiersDown {
+        if keyDown, modifiersDown {
             if startedAt == nil {
                 startedAt = now
             }
         } else {
             startedAt = nil
         }
+    }
+
+    /// Routes key events through the same physical-key match used in production.
+    /// - Parameters:
+    ///   - code: Hardware key code from the event.
+    ///   - type: Key event kind; other kinds preserve the current key state.
+    ///   - modifiers: Whether all required modifiers are held.
+    ///   - now: Current monotonic uptime in nanoseconds.
+    mutating func receive(code: CGKeyCode, type: CGEventType, modifiers: Bool, now: UInt64) {
+        let keyPressed: Bool? = code == Self.keyCode && (type == .keyDown || type == .keyUp)
+            ? type == .keyDown : nil
+        update(keyPressed: keyPressed, modifiers: modifiers, now: now)
     }
 
     /// Reports whether the current hold has reached the required duration.
@@ -167,7 +182,7 @@ final class CatLockDelegate: NSObject, NSApplicationDelegate {
         let flags = CGEventSource.flagsState(.hidSystemState)
         let required: CGEventFlags = [.maskControl, .maskAlternate, .maskCommand]
         gesture.update(
-            escape: CGEventSource.keyState(.hidSystemState, key: 53),
+            keyPressed: CGEventSource.keyState(.hidSystemState, key: UnlockGesture.keyCode),
             modifiers: flags.intersection(required) == required,
             now: DispatchTime.now().uptimeNanoseconds,
         )
@@ -193,13 +208,13 @@ final class CatLockDelegate: NSObject, NSApplicationDelegate {
         }
         let required: CGEventFlags = [.maskControl, .maskAlternate, .maskCommand]
         let modifiers = event.flags.intersection(required) == required
-        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-        var escape: Bool?
-        if keyCode == 53, type == .keyDown || type == .keyUp {
-            escape = type == .keyDown
-        }
         // Repeated keyDown preserves the original hold start.
-        gesture.update(escape: escape, modifiers: modifiers, now: DispatchTime.now().uptimeNanoseconds)
+        gesture.receive(
+            code: CGKeyCode(event.getIntegerValueField(.keyboardEventKeycode)),
+            type: type,
+            modifiers: modifiers,
+            now: DispatchTime.now().uptimeNanoseconds,
+        )
 
         return true
     }
@@ -207,10 +222,15 @@ final class CatLockDelegate: NSObject, NSApplicationDelegate {
     /// Installs a mouse-accessible status menu after event-tap creation succeeds.
     private func showStatus() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.title = "⌨ Locked"
+        let image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: "Cat Lock: keyboard locked")
+        image?.isTemplate = true
+        image?.size = NSSize(width: 18, height: 18)
+        item.button?.image = image
+        item.button?.title = ""
+        item.button?.setAccessibilityLabel("Cat Lock: keyboard locked")
         item.button?.toolTip = "CatLock: keyboard locked; mouse remains available"
         let menu = NSMenu()
-        let hint = NSMenuItem(title: "⌃⌥⌘⎋ — hold for 2 seconds", action: nil, keyEquivalent: "")
+        let hint = NSMenuItem(title: "⌃⌥⌘U — hold for 2 seconds", action: nil, keyEquivalent: "")
         hint.isEnabled = false
         menu.addItem(hint)
         let unlockItem = NSMenuItem(title: "Unlock", action: #selector(unlock), keyEquivalent: "")
@@ -294,19 +314,24 @@ struct CatLock {
     /// - Precondition: The built-in gesture implementation satisfies its fixed regression cases.
     private static func selfTest() {
         var gesture = UnlockGesture()
-        gesture.update(escape: true, modifiers: true, now: 100)
-        precondition(!gesture.completed(at: 2_000_000_099))
-        gesture.update(escape: true, modifiers: true, now: 1_000_000_100)
-        precondition(gesture.completed(at: 2_000_000_100), "repeat must preserve start")
-        gesture.update(escape: false, modifiers: true, now: 2_000_000_101)
-        precondition(!gesture.completed(at: 9_000_000_000), "Escape release cancels")
-        gesture.update(escape: true, modifiers: true, now: 10_000_000_000)
-        gesture.update(modifiers: false, now: 11_000_000_000)
-        precondition(!gesture.completed(at: 12_000_000_000), "modifier release cancels")
-        gesture.update(modifiers: true, now: 13_000_000_000)
-        precondition(!gesture.completed(at: 14_999_999_999))
-        precondition(gesture.completed(at: 15_000_000_000))
-        precondition(!gesture.completed(at: 12_000_000_000), "clock cannot run backward")
+        gesture.receive(code: CGKeyCode(kVK_Escape), type: .keyDown, modifiers: true, now: 0)
+        precondition(!gesture.completed(at: 3_000_000_000), "old Escape must not start unlock")
+        gesture.receive(code: UnlockGesture.keyCode, type: .keyDown, modifiers: true, now: 4_000_000_000)
+        precondition(!gesture.completed(at: 5_999_999_999), "U must be held for two seconds")
+        gesture.receive(code: UnlockGesture.keyCode, type: .keyDown, modifiers: true, now: 5_000_000_000)
+        precondition(gesture.completed(at: 6_000_000_000), "U repeat must preserve start")
+        gesture.receive(code: UnlockGesture.keyCode, type: .keyUp, modifiers: true, now: 6_000_000_001)
+        precondition(!gesture.completed(at: 9_000_000_000), "U release cancels")
+        gesture.receive(code: UnlockGesture.keyCode, type: .keyDown, modifiers: true, now: 10_000_000_000)
+        gesture.receive(code: UnlockGesture.keyCode, type: .keyUp, modifiers: true, now: 11_000_000_000)
+        precondition(!gesture.completed(at: 12_000_000_000), "early U release cancels")
+        gesture.receive(code: UnlockGesture.keyCode, type: .keyDown, modifiers: true, now: 13_000_000_000)
+        gesture.update(modifiers: false, now: 14_000_000_000)
+        precondition(!gesture.completed(at: 15_000_000_000), "early modifier release cancels")
+        gesture.update(modifiers: true, now: 16_000_000_000)
+        precondition(!gesture.completed(at: 17_999_999_999))
+        precondition(gesture.completed(at: 18_000_000_000))
+        precondition(!gesture.completed(at: 15_000_000_000), "clock cannot run backward")
         print("CatLock gesture self-test passed")
     }
 }

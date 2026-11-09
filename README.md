@@ -23,9 +23,9 @@ Privacy & Security → Accessibility**. Cat Lock does not change this setting.
 
 ## Use and unlock
 
-Run **Cat Lock** from Tinycast to open the helper. When its menu bar item shows
-`⌨ Locked`, click it and choose **Unlock** or **Quit**. You can also hold
-**Control + Option + Command + Escape** for two seconds to unlock.
+Run **Cat Lock** from Tinycast to open the helper. Its menu bar status is the
+native `lock.fill` padlock icon, without a “Locked” label. Click it to choose
+**Unlock** or **Quit**, or hold **⌃⌥⌘U** for two seconds to unlock.
 
 Secure Input sessions, such as password entry, make Cat Lock exit fail-open;
 run the Tinycast command again after that session. The physical power button
