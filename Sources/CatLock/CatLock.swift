@@ -230,10 +230,7 @@ final class CatLockDelegate: NSObject, NSApplicationDelegate {
         item.button?.setAccessibilityLabel("Cat Lock: keyboard locked")
         item.button?.toolTip = "CatLock: keyboard locked; mouse remains available"
         let menu = NSMenu()
-        let hint = NSMenuItem(title: "⌃⌥⌘U — hold for 2 seconds", action: nil, keyEquivalent: "")
-        hint.isEnabled = false
-        menu.addItem(hint)
-        let unlockItem = NSMenuItem(title: "Unlock", action: #selector(unlock), keyEquivalent: "")
+        let unlockItem = NSMenuItem(title: "Unlock    ⌃⌥⌘U (hold 2 seconds)", action: #selector(unlock), keyEquivalent: "")
         unlockItem.target = self
         menu.addItem(unlockItem)
         let quitItem = NSMenuItem(title: "Quit", action: #selector(unlock), keyEquivalent: "")
