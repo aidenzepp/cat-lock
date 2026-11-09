@@ -231,6 +231,12 @@ final class CatLockDelegate: NSObject, NSApplicationDelegate {
         item.button?.toolTip = "CatLock: keyboard locked; mouse remains available"
         let menu = NSMenu()
         let unlockItem = NSMenuItem(title: "Unlock    ⌃⌥⌘U (hold 2 seconds)", action: #selector(unlock), keyEquivalent: "")
+        let unlockTitle = NSMutableAttributedString(string: "Unlock    ")
+        unlockTitle.append(NSAttributedString(
+            string: "⌃⌥⌘U (hold 2 seconds)",
+            attributes: [.foregroundColor: NSColor.secondaryLabelColor],
+        ))
+        unlockItem.attributedTitle = unlockTitle
         unlockItem.target = self
         menu.addItem(unlockItem)
         let quitItem = NSMenuItem(title: "Quit", action: #selector(unlock), keyEquivalent: "")
