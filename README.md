@@ -31,3 +31,5 @@ Secure Input sessions, such as password entry, make Cat Lock exit fail-open;
 run the Tinycast command again after that session. The physical power button
 is outside Cat Lock's coverage. Keep your Mac supervised if pressing it could
 cause a problem.
+
+Warm Key artwork by Arrow 2, from [Quiver](https://app.quiver.ai/chat/d0e82878-ea8c-44dc-809b-44d2ccd11e4f); source SVG: `assets/cat-lock.svg`.

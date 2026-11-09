@@ -2,6 +2,7 @@
   "name": "cat-lock",
   "title": "Cat Lock",
   "description": "Open the Cat Lock keyboard helper.",
+  "icon": "icon.png",
   "author": "Sterling",
   "license": "UNLICENSED",
   "commands": [
@@ -9,6 +10,7 @@
       "name": "cat-lock",
       "title": "Cat Lock",
       "description": "Open the Cat Lock keyboard helper.",
+      "icon": "icon.png",
       "mode": "no-view"
     }
   ]
