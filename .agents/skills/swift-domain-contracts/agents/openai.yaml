@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Domain Contracts"
+  short_description: "Honest Swift signatures and invariant-bearing values"
+  default_prompt: "Use $swift-domain-contracts to design or review Swift functions, domain types, parsing boundaries, dependencies and effects without adding needless protocols, wrappers, mocks or helpers."

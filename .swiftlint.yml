@@ -1,0 +1,85 @@
+# Formatting belongs to SwiftFormat. This explicit list owns additional code checks.
+# Review rule changes with pinned SwiftLint upgrades; do not enable every opt-in rule.
+strict: true
+allow_zero_lintable_files: false
+check_for_updates: false
+
+only_rules:
+  - blanket_disable_command
+  - custom_rules
+  - contains_over_filter_is_empty
+  - discarded_notification_center_observer
+  - discouraged_direct_init
+  - duplicate_conditions
+  - duplicate_enum_cases
+  - duplicate_imports
+  - duplicated_key_in_dictionary_literal
+  - empty_count
+  - fatal_error_message
+  - first_where
+  - force_cast
+  - force_try
+  - force_unwrapping
+  - function_body_length
+  - implicitly_unwrapped_optional
+  - last_where
+  - legacy_hashing
+  - missing_docs
+  - no_empty_block
+  - non_optional_string_data_conversion
+  - notification_center_detachment
+  - orphaned_doc_comment
+  - overridden_super_call
+  - private_swiftui_state
+  - prohibited_super_call
+  - reduce_into
+  - redundant_sendable
+  - redundant_set_access_control
+  - sorted_first_last
+  - superfluous_disable_command
+  - unavailable_condition
+  - unhandled_throwing_task
+  - unneeded_override
+  - unneeded_synthesized_initializer
+  - unowned_variable_capture
+  - unused_closure_parameter
+  - unused_control_flow_label
+  - unused_enumerated
+  - unused_optional_binding
+  - unused_setter_value
+  - weak_delegate
+
+# Refuse literal-constructor exemptions (including URL and UUID) and IBOutlet IUOs.
+force_unwrapping:
+  ignored_literal_argument_functions: []
+implicitly_unwrapped_optional:
+  mode: all
+
+# Small functions, after the Linux kernel coding style: about one screen. Under
+# strict mode the warning threshold fails the check.
+function_body_length:
+  warning: 40
+
+missing_docs:
+  error: [open, public, package, internal, fileprivate, private]
+  excludes_extensions: false
+  excludes_inherited_types: false
+  excludes_trivial_init: false
+  evaluate_effective_access_control_level: true
+
+# Filter by attribute syntax so examples in comments or strings do not match.
+custom_rules:
+  no_discardable_result:
+    name: Non-discardable results
+    regex: '@discardableResult\b'
+    match_kinds: [attribute.builtin, attribute.id]
+    message: 'Keep meaningful results non-discardable; return Void from effect-only operations.'
+    severity: error
+
+  result_failure_paths:
+    name: Result failure paths
+    excluded: '(^|/)([^/]*Tests/|[^/]*Tests\.swift$)'
+    regex: '\b(?:throws|rethrows|catch)\b'
+    match_kinds: [keyword]
+    message: 'Return a typed Result; wrap synchronous SDK calls with Result(catching:).'
+    severity: error

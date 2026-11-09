@@ -1,0 +1,4 @@
+interface:
+  display_name: "SwiftUI Design Tokens"
+  short_description: "Stock styles, AccentColor, and the few tokens an app adds"
+  default_prompt: "Use $swiftui-design-tokens to add or review this app's AccentColor, color sets, type, spacing, corner shapes, materials and variant styles, starting from stock SwiftUI styles."

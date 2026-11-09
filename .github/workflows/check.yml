@@ -1,0 +1,33 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tooling:
+    runs-on: xcode-27
+    timeout-minutes: 10
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned tools
+        run: ./scripts/dev.swift bootstrap
+      - name: Check toolchain
+        run: ./scripts/dev.swift doctor
+      - name: Check Swift sources
+        run: ./scripts/dev.swift check
+      - name: Verify tooling enforcement
+        run: ./scripts/dev.swift test

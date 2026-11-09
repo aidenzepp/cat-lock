@@ -1,0 +1,11 @@
+// Assign this as the base configuration of application and test targets in Xcode.
+// Set the language mode explicitly; a Swift 6 compiler can otherwise use Swift 5 mode.
+SWIFT_VERSION = 6.0
+SWIFT_STRICT_CONCURRENCY = complete
+SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES
+SWIFT_TREAT_WARNINGS_AS_ERRORS = YES
+GCC_TREAT_WARNINGS_AS_ERRORS = YES
+OTHER_SWIFT_FLAGS = $(inherited) -strict-memory-safety
+
+// Actor isolation is a target/domain decision, not a universal tooling preference.
+// Preserve Xcode's platform-specific settings for signing, SDKs, and deployment.

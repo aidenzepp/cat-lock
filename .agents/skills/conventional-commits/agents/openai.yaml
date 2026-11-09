@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conventional Commits"
+  short_description: "Targeted commits with conventional prefixes and clear scope"
+  default_prompt: "Use $conventional-commits when staging or committing. Inspect the diff, split it into one-story commits, pick the most specific prefix and a scope from this template's targets, stage explicit paths, and report only the checks that ran."

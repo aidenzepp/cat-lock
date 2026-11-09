@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Isolation"
+  short_description: "Isolation, cancellation, Result failures, unchecked invariants"
+  default_prompt: "Use $swift-isolation to write or review Swift 6 async code, task cancellation, Result-returning failure paths, escape hatches and unchecked invariants in this project."

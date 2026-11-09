@@ -1,0 +1,4 @@
+interface:
+  display_name: "App Verification"
+  short_description: "Prove app behavior with tests, audits and localization checks"
+  default_prompt: "Use $app-verification to write or run the tests, audits and localization checks that prove this change works, and report exactly what ran."

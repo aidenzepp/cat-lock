@@ -1,0 +1,4 @@
+interface:
+  display_name: "Xcode Project Settings"
+  short_description: "Per-target Xcode settings and package manifest strictness"
+  default_prompt: "Use $xcode-project-settings to set up or review the build settings, isolation and manifest strictness for this app project and its local package."

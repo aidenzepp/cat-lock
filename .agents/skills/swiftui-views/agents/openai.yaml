@@ -1,0 +1,4 @@
+interface:
+  display_name: "SwiftUI Views"
+  short_description: "SwiftUI choices that compile clean when wrong"
+  default_prompt: "Use $swiftui-views to write or review SwiftUI views and @Observable models: current APIs, model ownership, view structure and ForEach identity."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Error Surfaces"
+  short_description: "Alert and inline error text in SwiftUI apps"
+  default_prompt: "Use $swift-error-surfaces to write or review alert titles and messages, inline validation and the display text an error type carries."

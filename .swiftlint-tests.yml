@@ -1,0 +1,4 @@
+# Test declarations may throw through the Result rule's path exclusion.
+# All safety/performance rules remain inherited; this profile exempts docs only.
+disabled_rules:
+  - missing_docs

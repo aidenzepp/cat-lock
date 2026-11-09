@@ -1,0 +1,10 @@
+# Inherit SwiftFormat defaults except the intentional layout choices below.
+--swiftversion 6.4
+--enable organizeDeclarations,wrapMultilineFunctionChains,wrapGuardStatementBodies,wrapDoBodies,wrapCaseBodies,blankLineAfterSwitchCase,wrapClosureBodies
+--organization-mode type
+--mark-categories false
+--wrap-arguments before-first
+--wrap-parameters before-first
+--allow-partial-wrapping false
+--blank-line-after-switch-case multiline-only
+--wrap-closure-bodies always

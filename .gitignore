@@ -1,0 +1,23 @@
+# Local tools, research, and coordination are not template source.
+.tools/
+.vivi/
+work/
+.DS_Store
+
+# Xcode and Swift Package Manager outputs and user settings.
+.build/
+.swiftpm/
+DerivedData/
+build/
+*.xcresult
+xcuserdata/
+*.xcuserstate
+
+# Local secrets and signing materials.
+.env
+.env.local
+*.p12
+*.mobileprovision
+
+# Generated Cat Lock app bundled into the Tinycast extension.
+extension/assets/CatLock.app/

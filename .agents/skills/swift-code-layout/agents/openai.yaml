@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Code Layout"
+  short_description: "Blank lines by logical step, line order, small functions"
+  default_prompt: "Use $swift-code-layout to lay out or review the statements in a Swift body: group them into logical steps, order lines within each step, place defer and explaining comments, bind or split out a closure the check reports in a condition, and move a long step into a small function named for it."

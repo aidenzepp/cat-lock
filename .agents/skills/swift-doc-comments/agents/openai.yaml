@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Doc Comments"
+  short_description: "DocC contracts, Result failures, @Observable properties"
+  default_prompt: "Use $swift-doc-comments to write or review Swift doc comments: DocC summaries and sections, Result failure cases, preconditions, symbol links and @Observable model properties."

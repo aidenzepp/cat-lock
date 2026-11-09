@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Test Design"
+  short_description: "What Swift tests prove: contracts, seams, fakes, failures"
+  default_prompt: "Use $swift-test-design to decide what to test, choose the boundary and seams, and write or review Swift Testing tests for this project."
