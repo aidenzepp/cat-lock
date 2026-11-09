@@ -1,35 +1,59 @@
 # Cat Lock
 
-Cat Lock pauses keyboard input while a cat is near your Mac. The native helper
-fails open if macOS Secure Input is active. Live key coverage is unverified.
+Cat Lock is a macOS menu bar app that temporarily blocks keyboard input.
 
-## Build and install
+The app targets macOS 13 or later. The build toolchain is Xcode 27.0 build
+27A266a. Tinycast requires an Apple silicon Mac running macOS 26 or later. See
+[Tinycast install requirements](https://tinycast.dev/docs/install/) and its
+[Add from folder guide](https://tinycast.dev/docs/extensions/installing/).
 
-From the project root:
+Keyboard coverage is experimental and unverified across hardware. Cat Lock
+refuses to lock while Secure Input is active and unlocks if Secure Input turns
+on or macOS interrupts keyboard filtering. The mouse remains available. Cat
+Lock does not block the physical power button.
 
-```sh
-./scripts/dev.swift bootstrap   # once, for the pinned formatter and linter
+## Install
+
+Clone and package the app:
+
+```bash
+git clone https://github.com/aidenzepp/cat-lock.git
+cd cat-lock
 ./scripts/package-cat-lock.sh
 ```
 
-In Tinycast, open **Settings → Extensions → Install → Add from folder** and
-select this project's `extension/` directory. Enable extensions in Tinycast if
-needed. Re-add the folder after rebuilding because folder installs do not
-auto-update.
+The script builds `extension/assets/CatLock.app`. To use Tinycast, enable
+extensions, then choose `Settings → Extensions → Install → Add from folder`
+and select `extension/`. Tinycast copies the extension, so add the folder again
+after each rebuild.
 
-If macOS asks for Accessibility access, grant it to Cat Lock yourself. If it
-does not prompt, add `extension/assets/CatLock.app` under **System Settings →
-Privacy & Security → Accessibility**. Cat Lock does not change this setting.
+## Start
 
-## Use and unlock
+To unlock, click the menu bar padlock and choose `Unlock` or `Quit`, or hold
+`⌃⌥⌘U` for two seconds.
 
-Run **Cat Lock** from Tinycast to open the helper. Its menu bar status is the
-native `lock.fill` padlock icon, without a “Locked” label. Click it to choose
-**Unlock** or **Quit**, or hold **⌃⌥⌘U** for two seconds to unlock.
+Run `Cat Lock` from Tinycast or open the app directly:
 
-Secure Input sessions, such as password entry, make Cat Lock exit fail-open;
-run the Tinycast command again after that session. The physical power button
-is outside Cat Lock's coverage. Keep your Mac supervised if pressing it could
-cause a problem.
+```console
+$ open extension/assets/CatLock.app
+```
 
-Warm Key artwork by Arrow 2, from [Quiver](https://app.quiver.ai/chat/d0e82878-ea8c-44dc-809b-44d2ccd11e4f); source SVG: `assets/cat-lock.svg`.
+On first launch, grant Accessibility access, then reopen Cat Lock. A padlock
+appears in the menu bar when the keyboard lock starts. If Cat Lock is not listed
+in Accessibility, click `+` in
+`System Settings → Privacy & Security → Accessibility`, choose
+`extension/assets/CatLock.app`, then reopen Cat Lock.
+
+## Development
+
+The formatter and linter tools are for development. They are not needed to
+package the app. Run `./scripts/dev.swift bootstrap` once, then
+`./scripts/dev.swift check`. To check the unlock gesture without starting
+keyboard capture, run
+`extension/assets/CatLock.app/Contents/MacOS/CatLock --self-test`.
+
+See [Contributing](CONTRIBUTING.md) and [agent instructions](AGENTS.md) for
+code changes.
+
+Warm Key artwork is by Arrow 2. See the [source SVG](assets/cat-lock.svg) and
+[Quiver conversation](https://app.quiver.ai/chat/d0e82878-ea8c-44dc-809b-44d2ccd11e4f).
